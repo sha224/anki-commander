@@ -1,0 +1,22 @@
+plugins {
+    id 'java'
+}
+
+group 'com.shakhar.anki'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    implementation 'com.github.tenbergen:anki-drive-java:0.1.2'
+    implementation 'org.apache.sshd:sshd-core:2.2.0'
+    implementation 'org.jline:jline:3.10.0'
+    implementation 'org.slf4j:slf4j-api:1.7.26'
+    implementation 'org.slf4j:slf4j-simple:1.7.26'
+    testImplementation 'junit:junit:4.12'
+}
