@@ -84,7 +84,10 @@ public class AnkiShell implements Command, Runnable {
         switch (args[0]) {
             case "connect":
                 try {
-                    ankiConnector = new AnkiConnector(args[1], Integer.parseInt(args[2]));
+                    if (args.length >= 3)
+                        ankiConnector = new AnkiConnector(args[1], Integer.parseInt(args[2]));
+                    else
+                        ankiConnector = new AnkiConnector("localhost", 5000);
                 } catch (IOException e) {
                     e.printStackTrace(terminal.writer());
                 }
