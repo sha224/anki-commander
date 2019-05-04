@@ -2,6 +2,8 @@ package com.shakhar.anki.commander;
 
 import de.adesso.anki.AnkiConnector;
 import de.adesso.anki.Vehicle;
+import de.adesso.anki.messages.SdkModeMessage;
+import de.adesso.anki.messages.SetSpeedMessage;
 import org.apache.sshd.server.Environment;
 import org.apache.sshd.server.ExitCallback;
 import org.apache.sshd.server.command.Command;
@@ -16,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +36,7 @@ public class AnkiShell implements Command, Runnable {
     private AnkiConnector ankiConnector;
 
     private Map<String, Vehicle> vehicleMap;
+    private List<String> controlList;
 
     @Override
     public void setInputStream(InputStream in) {
@@ -92,6 +96,15 @@ public class AnkiShell implements Command, Runnable {
             case "scan":
                 handleScan();
                 break;
+            case "control":
+                handleControl(args);
+                break;
+            case "yield":
+                handleYield(args);
+                break;
+            case "speed":
+                handleSpeed(args);
+                break;
             case "exit":
                 return false;
             default:
@@ -118,6 +131,7 @@ public class AnkiShell implements Command, Runnable {
 
     private void handleScan() {
         vehicleMap = new HashMap<>();
+        controlList = new ArrayList<>();
         List<Vehicle> vehicles = ankiConnector.findVehicles();
         if (vehicles.isEmpty())
             write("No Vehicles Found.");
@@ -127,6 +141,28 @@ public class AnkiShell implements Command, Runnable {
                 vehicleMap.put(vehicle.getAddress(), vehicle);
                 write(vehicle.getAddress() + ": " + vehicle.getAdvertisement());
             }
+        }
+    }
+
+    private void handleControl(String[] args) {
+        for (int i = 1; i < args.length; i++)
+            controlList.add(args[i]);
+    }
+
+    private void handleYield(String[] args) {
+        for (int i = 1; i < args.length; i++)
+            controlList.remove(args[i]);
+    }
+
+    private void handleSpeed(String[] args) {
+        int speed = Integer.parseInt(args[1]);
+        int acceleration = Integer.parseInt(args[2]);
+        for (String address: controlList) {
+            Vehicle vehicle = vehicleMap.get(address);
+            vehicle.connect();
+            vehicle.sendMessage(new SdkModeMessage());
+            vehicle.sendMessage(new SetSpeedMessage(speed, acceleration));
+            vehicle.disconnect();
         }
     }
 }
