@@ -83,25 +83,10 @@ public class AnkiShell implements Command, Runnable {
         String[] args = command.split("\\s+");
         switch (args[0]) {
             case "connect":
-                try {
-                    if (args.length >= 3)
-                        ankiConnector = new AnkiConnector(args[1], Integer.parseInt(args[2]));
-                    else
-                        ankiConnector = new AnkiConnector("localhost", 5000);
-                } catch (IOException e) {
-                    e.printStackTrace(terminal.writer());
-                }
+                handleConnect(args);
                 break;
             case "search":
-                List<Vehicle> vehicles = ankiConnector.findVehicles();
-                if (vehicles.isEmpty())
-                    write("No Vehicles Found.");
-                else {
-                    write("Found " + vehicles.size() + " vehicles.");
-                    for (Vehicle vehicle : vehicles) {
-                        write("Vehicle " + vehicle.getAddress());
-                    }
-                }
+                handleSearch();
                 break;
             case "exit":
                 return false;
@@ -114,5 +99,28 @@ public class AnkiShell implements Command, Runnable {
     private void write(String s) {
         terminal.writer().println(s);
         terminal.writer().flush();
+    }
+
+    private void handleConnect(String[] args) {
+        try {
+            if (args.length >= 3)
+                ankiConnector = new AnkiConnector(args[1], Integer.parseInt(args[2]));
+            else
+                ankiConnector = new AnkiConnector("localhost", 5000);
+        } catch (IOException e) {
+            e.printStackTrace(terminal.writer());
+        }
+    }
+
+    private void handleSearch() {
+        List<Vehicle> vehicles = ankiConnector.findVehicles();
+        if (vehicles.isEmpty())
+            write("No Vehicles Found.");
+        else {
+            write("Found " + vehicles.size() + " vehicle(s):");
+            for (Vehicle vehicle : vehicles) {
+                write(vehicle.getAddress());
+            }
+        }
     }
 }
