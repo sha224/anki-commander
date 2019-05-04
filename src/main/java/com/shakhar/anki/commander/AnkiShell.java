@@ -109,6 +109,9 @@ public class AnkiShell implements Command, Runnable {
             case "light":
                 handleLight(args);
                 break;
+            case "help":
+                handleHelp();
+                break;
             case "exit":
                 handleExit();
                 return false;
@@ -193,6 +196,16 @@ public class AnkiShell implements Command, Runnable {
             message.add(new LightsPatternMessage.LightConfig(channel, effect, start, end, cycles));
         }
         controlVehicle.sendMessage(message);
+    }
+
+    private void handleHelp() {
+        write("connect <host> <port> - Connects to the Anki Server. This should always be the first command. If host and port are not specified, default values of localhost and 5000 are used.\n" +
+                "scan - Scans for all the available vehicles and prints out information about them. This should always be the second command after connect.\n" +
+                "control <address> - Connects to the vehicle with the specified address. The address can be found from the output of scan.\n" +
+                "speed <target_speed> <acceleration> - Changes speed of the connected vehicle.\n" +
+                "turn <turn_type> <trigger> - Turns the connected vehicle. For a u-turn, use turn_type 3 and trigger 0 or 1.\n" +
+                "lane <offset_from_center> <horizontal_speed> <horizontal_acceleration> - Makes the connected vehicle do a lane change to the specified offset.\n" +
+                "light <list of configs> - Sets the lights of the connected vehicle using the specified configs. Each config is a comma-separated list of the format: <channel>,<effect>,<start>,<end>,<cycles>. Possible values of channels are ENGINE_RED, TAIL, ENGINE_BLUE, ENGINE_GREEN, FRONT_RED, FRONT_GREEN. Possible values of effects are STEADY, FADE, THROB, FLASH, STROBE.");
     }
 
     private void handleExit() {
