@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'application'
 }
 
 group 'com.shakhar.anki'
@@ -20,3 +21,5 @@ dependencies {
     implementation 'org.slf4j:slf4j-simple:1.7.26'
     testImplementation 'junit:junit:4.12'
 }
+
+mainClassName = 'com.shakhar.anki.commander.AnkiSshd'
