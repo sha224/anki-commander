@@ -99,9 +99,6 @@ public class AnkiShell implements Command, Runnable {
             case "control":
                 handleControl(args);
                 break;
-            case "yield":
-                handleYield(args);
-                break;
             case "speed":
                 handleSpeed(args);
                 break;
@@ -127,11 +124,12 @@ public class AnkiShell implements Command, Runnable {
         } catch (IOException e) {
             e.printStackTrace(terminal.writer());
         }
+        vehicleMap = new HashMap<>();
+        controlList = new ArrayList<>();
     }
 
     private void handleScan() {
-        vehicleMap = new HashMap<>();
-        controlList = new ArrayList<>();
+        vehicleMap.clear();
         List<Vehicle> vehicles = ankiConnector.findVehicles();
         if (vehicles.isEmpty())
             write("No Vehicles Found.");
@@ -145,13 +143,9 @@ public class AnkiShell implements Command, Runnable {
     }
 
     private void handleControl(String[] args) {
+        controlList.clear();
         for (int i = 1; i < args.length; i++)
             controlList.add(args[i]);
-    }
-
-    private void handleYield(String[] args) {
-        for (int i = 1; i < args.length; i++)
-            controlList.remove(args[i]);
     }
 
     private void handleSpeed(String[] args) {
