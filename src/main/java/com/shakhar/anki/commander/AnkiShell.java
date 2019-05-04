@@ -4,6 +4,7 @@ import de.adesso.anki.AnkiConnector;
 import de.adesso.anki.Vehicle;
 import de.adesso.anki.messages.SdkModeMessage;
 import de.adesso.anki.messages.SetSpeedMessage;
+import de.adesso.anki.messages.TurnMessage;
 import org.apache.sshd.server.Environment;
 import org.apache.sshd.server.ExitCallback;
 import org.apache.sshd.server.command.Command;
@@ -154,5 +155,11 @@ public class AnkiShell implements Command, Runnable {
         int speed = Integer.parseInt(args[1]);
         int acceleration = Integer.parseInt(args[2]);
         controlVehicle.sendMessage(new SetSpeedMessage(speed, acceleration));
+    }
+
+    private void handleTurn(String[] args) {
+        int turnType = Integer.parseInt(args[1]);
+        int trigger = Integer.parseInt(args[2]);
+        controlVehicle.sendMessage(new TurnMessage(turnType, trigger));
     }
 }
