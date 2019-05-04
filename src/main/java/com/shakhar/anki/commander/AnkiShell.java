@@ -211,6 +211,7 @@ public class AnkiShell implements Command, Runnable {
     private void handleExit() {
         if (controlVehicle != null)
             controlVehicle.disconnect();
-        ankiConnector.close();
+        if (ankiConnector != null)
+            ankiConnector.close();
     }
 }
