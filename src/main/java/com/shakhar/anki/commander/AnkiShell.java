@@ -106,6 +106,7 @@ public class AnkiShell implements Command, Runnable {
                 handleTurn(args);
                 break;
             case "exit":
+                handleExit();
                 return false;
             default:
                 write("Unknown command");
@@ -164,5 +165,11 @@ public class AnkiShell implements Command, Runnable {
         int turnType = Integer.parseInt(args[1]);
         int trigger = Integer.parseInt(args[2]);
         controlVehicle.sendMessage(new TurnMessage(turnType, trigger));
+    }
+
+    private void handleExit() {
+        if (controlVehicle != null)
+            controlVehicle.disconnect();
+        ankiConnector.close();
     }
 }
