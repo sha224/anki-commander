@@ -16,7 +16,9 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AnkiShell implements Command, Runnable {
 
@@ -29,6 +31,8 @@ public class AnkiShell implements Command, Runnable {
     private Thread thread;
     private Terminal terminal;
     private AnkiConnector ankiConnector;
+
+    private Map<String, Vehicle> vehicleMap;
 
     @Override
     public void setInputStream(InputStream in) {
@@ -85,8 +89,8 @@ public class AnkiShell implements Command, Runnable {
             case "connect":
                 handleConnect(args);
                 break;
-            case "search":
-                handleSearch();
+            case "scan":
+                handleScan();
                 break;
             case "exit":
                 return false;
@@ -112,14 +116,16 @@ public class AnkiShell implements Command, Runnable {
         }
     }
 
-    private void handleSearch() {
+    private void handleScan() {
+        vehicleMap = new HashMap<>();
         List<Vehicle> vehicles = ankiConnector.findVehicles();
         if (vehicles.isEmpty())
             write("No Vehicles Found.");
         else {
             write("Found " + vehicles.size() + " vehicle(s):");
             for (Vehicle vehicle : vehicles) {
-                write(vehicle.getAddress());
+                vehicleMap.put(vehicle.getAddress(), vehicle);
+                write(vehicle.getAddress() + ": " + vehicle.getAdvertisement());
             }
         }
     }
