@@ -102,6 +102,9 @@ public class AnkiShell implements Command, Runnable {
             case "speed":
                 handleSpeed(args);
                 break;
+            case "turn":
+                handleTurn(args);
+                break;
             case "exit":
                 return false;
             default:
