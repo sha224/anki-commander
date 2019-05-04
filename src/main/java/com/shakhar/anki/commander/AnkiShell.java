@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +35,7 @@ public class AnkiShell implements Command, Runnable {
     private AnkiConnector ankiConnector;
 
     private Map<String, Vehicle> vehicleMap;
-    private List<String> controlList;
+    private Vehicle controlVehicle;
 
     @Override
     public void setInputStream(InputStream in) {
@@ -125,7 +124,6 @@ public class AnkiShell implements Command, Runnable {
             e.printStackTrace(terminal.writer());
         }
         vehicleMap = new HashMap<>();
-        controlList = new ArrayList<>();
     }
 
     private void handleScan() {
@@ -143,20 +141,18 @@ public class AnkiShell implements Command, Runnable {
     }
 
     private void handleControl(String[] args) {
-        controlList.clear();
-        for (int i = 1; i < args.length; i++)
-            controlList.add(args[i]);
+        if (controlVehicle != null)
+            controlVehicle.disconnect();
+        controlVehicle = vehicleMap.get(args[1]);
+        if (controlVehicle != null) {
+            controlVehicle.connect();
+            controlVehicle.sendMessage(new SdkModeMessage());
+        }
     }
 
     private void handleSpeed(String[] args) {
         int speed = Integer.parseInt(args[1]);
         int acceleration = Integer.parseInt(args[2]);
-        for (String address: controlList) {
-            Vehicle vehicle = vehicleMap.get(address);
-            vehicle.connect();
-            vehicle.sendMessage(new SdkModeMessage());
-            vehicle.sendMessage(new SetSpeedMessage(speed, acceleration));
-            vehicle.disconnect();
-        }
+        controlVehicle.sendMessage(new SetSpeedMessage(speed, acceleration));
     }
 }
