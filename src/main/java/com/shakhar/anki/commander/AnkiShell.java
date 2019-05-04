@@ -2,10 +2,7 @@ package com.shakhar.anki.commander;
 
 import de.adesso.anki.AnkiConnector;
 import de.adesso.anki.Vehicle;
-import de.adesso.anki.messages.ChangeLaneMessage;
-import de.adesso.anki.messages.SdkModeMessage;
-import de.adesso.anki.messages.SetSpeedMessage;
-import de.adesso.anki.messages.TurnMessage;
+import de.adesso.anki.messages.*;
 import org.apache.sshd.server.Environment;
 import org.apache.sshd.server.ExitCallback;
 import org.apache.sshd.server.command.Command;
@@ -109,6 +106,9 @@ public class AnkiShell implements Command, Runnable {
             case "lane":
                 handleLane(args);
                 break;
+            case "light":
+                handleLight(args);
+                break;
             case "exit":
                 handleExit();
                 return false;
@@ -179,6 +179,20 @@ public class AnkiShell implements Command, Runnable {
         int horizontalSpeed = Integer.parseInt(args[2]);
         int horizontalAcceleration = Integer.parseInt(args[3]);
         controlVehicle.sendMessage(new ChangeLaneMessage(offsetFromCenter, horizontalSpeed, horizontalAcceleration));
+    }
+
+    private void handleLight(String[] args) {
+        LightsPatternMessage message = new LightsPatternMessage();
+        for (int i = 1; i < args.length; i++) {
+            String[] config = args[i].split(",");
+            LightsPatternMessage.LightChannel channel = LightsPatternMessage.LightChannel.valueOf(config[0]);
+            LightsPatternMessage.LightEffect effect = LightsPatternMessage.LightEffect.valueOf(config[1]);
+            int start = Integer.parseInt(config[2]);
+            int end = Integer.parseInt(config[3]);
+            int cycles = Integer.parseInt(config[4]);
+            message.add(new LightsPatternMessage.LightConfig(channel, effect, start, end, cycles));
+        }
+        controlVehicle.sendMessage(message);
     }
 
     private void handleExit() {
