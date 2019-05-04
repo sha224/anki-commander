@@ -121,10 +121,13 @@ public class AnkiShell implements Command, Runnable {
 
     private void handleConnect(String[] args) {
         try {
+            String host = "localhost";
+            int port = 5000;
+            if (args.length >= 2)
+                host = args[1];
             if (args.length >= 3)
-                ankiConnector = new AnkiConnector(args[1], Integer.parseInt(args[2]));
-            else
-                ankiConnector = new AnkiConnector("localhost", 5000);
+                port = Integer.parseInt(args[2]);
+            ankiConnector = new AnkiConnector(host, port);
         } catch (IOException e) {
             e.printStackTrace(terminal.writer());
         }
