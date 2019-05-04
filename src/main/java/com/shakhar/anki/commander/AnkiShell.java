@@ -2,6 +2,7 @@ package com.shakhar.anki.commander;
 
 import de.adesso.anki.AnkiConnector;
 import de.adesso.anki.Vehicle;
+import de.adesso.anki.messages.ChangeLaneMessage;
 import de.adesso.anki.messages.SdkModeMessage;
 import de.adesso.anki.messages.SetSpeedMessage;
 import de.adesso.anki.messages.TurnMessage;
@@ -105,6 +106,9 @@ public class AnkiShell implements Command, Runnable {
             case "turn":
                 handleTurn(args);
                 break;
+            case "lane":
+                handleLane(args);
+                break;
             case "exit":
                 handleExit();
                 return false;
@@ -168,6 +172,13 @@ public class AnkiShell implements Command, Runnable {
         int turnType = Integer.parseInt(args[1]);
         int trigger = Integer.parseInt(args[2]);
         controlVehicle.sendMessage(new TurnMessage(turnType, trigger));
+    }
+
+    private void handleLane(String[] args) {
+        int offsetFromCenter = Integer.parseInt(args[1]);
+        int horizontalSpeed = Integer.parseInt(args[2]);
+        int horizontalAcceleration = Integer.parseInt(args[3]);
+        controlVehicle.sendMessage(new ChangeLaneMessage(offsetFromCenter, horizontalSpeed, horizontalAcceleration));
     }
 
     private void handleExit() {
